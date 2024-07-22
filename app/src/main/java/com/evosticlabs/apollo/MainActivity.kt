@@ -11,7 +11,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.evosticlabs.apollo.ui.theme.ApolloTheme
+import kotlinx.serialization.Serializable
+import androidx.navigation.compose.composable
+import com.evosticlabs.apollo.screens.FeatureScreen
+import com.evosticlabs.apollo.screens.LandingScreen
+import com.evosticlabs.apollo.screens.ResultScreen
+import com.evosticlabs.apollo.screens.SplashScreen
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,29 +28,38 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ApolloTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = Splash
+                ) {
+                    composable<Splash> {
+                        SplashScreen(navController)
+                    }
+                    composable<Landing> {
+                        LandingScreen(navController)
+                    }
+                    composable<Feature> {
+                        FeatureScreen(navController)
+                    }
+                    composable<Result> {
+                        ResultScreen(navController)
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+@Serializable
+object Splash
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ApolloTheme {
-        Greeting("Android")
-    }
-}
+@Serializable
+object Landing
+
+@Serializable
+object Feature
+
+@Serializable
+object Result
+
