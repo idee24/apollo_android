@@ -60,6 +60,25 @@ android {
 }
 
 chaquopy {
+    defaultConfig {
+        version = "3.8"
+        pip {
+            // A requirement specifier, with or without a version number:
+            install("scipy")
+            install("requests==2.24.0")
+
+            // An sdist or wheel filename, relative to the project directory:
+            install("MyPackage-1.2.3-py2.py3-none-any.whl")
+
+            // A directory containing a setup.py, relative to the project
+            // directory (must contain at least one slash):
+            install("./MyPackage")
+
+            // "-r"` followed by a requirements filename, relative to the
+            // project directory:
+            install("-r", "requirements.txt")
+        }
+    }
     productFlavors {
         getByName("py310") { version = "3.10" }
         getByName("py311") { version = "3.11" }
@@ -87,5 +106,6 @@ dependencies {
     //compose navigation
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.lottie.compose)
 
 }

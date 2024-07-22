@@ -16,9 +16,13 @@ import androidx.navigation.compose.rememberNavController
 import com.evosticlabs.apollo.ui.theme.ApolloTheme
 import kotlinx.serialization.Serializable
 import androidx.navigation.compose.composable
+import com.evosticlabs.apollo.screens.Feature
 import com.evosticlabs.apollo.screens.FeatureScreen
+import com.evosticlabs.apollo.screens.Landing
+import com.evosticlabs.apollo.screens.Result
 import com.evosticlabs.apollo.screens.LandingScreen
 import com.evosticlabs.apollo.screens.ResultScreen
+import com.evosticlabs.apollo.screens.Splash
 import com.evosticlabs.apollo.screens.SplashScreen
 
 
@@ -51,15 +55,5 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Serializable
-object Splash
 
-@Serializable
-object Landing
-
-@Serializable
-object Feature
-
-@Serializable
-object Result
 

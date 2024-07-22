@@ -11,3 +11,8 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val BackgroundBlue = Color(0xFF0A0D1A)
+val LoaderBackgroundBlue = Color(0x990A0D1A)
+val HighlightBlue = Color(0xFFA3C7D7)
+
+val ActionBlue = Color(0xFF0A5095)
+val DormantBlue = Color(0xFF0B182E)
