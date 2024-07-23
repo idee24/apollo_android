@@ -42,22 +42,18 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.evosticlabs.apollo.R
 import com.evosticlabs.apollo.ui.theme.ActionBlue
 import com.evosticlabs.apollo.ui.theme.BackgroundBlue
-import com.evosticlabs.apollo.ui.theme.HighlightBlue
 import com.evosticlabs.apollo.screens.Feature
 import com.evosticlabs.apollo.ui.theme.LoaderBackgroundBlue
+import com.evosticlabs.apollo.ui.theme.TextBlue
 
 /**
  *@Created by Yerimah on 22/07/2024.
  */
 @Composable
-fun LandingScreen(context: Context, navController: NavController) {
+fun LandingScreen(context: Context, navToFeature: () -> Unit) {
 
 
     val isLoading = rememberSaveable { mutableStateOf(false) }
-
-    if (isLoading.value) {
-        LoadingFrame()
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -118,7 +114,7 @@ fun LandingScreen(context: Context, navController: NavController) {
                             isLoading.value = true
                             Handler(Looper.getMainLooper()).postDelayed({
                                 isLoading.value = false
-                                navController.navigate(Feature)
+                                navToFeature.invoke()
                             }, 5000)
                         } else {
                             Toast
@@ -137,11 +133,10 @@ fun LandingScreen(context: Context, navController: NavController) {
 
         }
 
-
-
+        if (isLoading.value) {
+            LoadingFrame(context.getString(R.string.training_in_progress_please_wait))
+        }
     }
-
-
 
 }
 
@@ -154,11 +149,11 @@ fun FeatureItem(name: String,
         text = name,
         fontSize = 12.sp,
         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-        color = HighlightBlue,
+        color = TextBlue,
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .border(width = 1.dp, color = HighlightBlue, shape = RoundedCornerShape(8.dp))
+            .border(width = 1.dp, color = TextBlue, shape = RoundedCornerShape(8.dp))
             .background(
                 color = if (isSelected) ActionBlue else BackgroundBlue,
                 shape = RoundedCornerShape(8.dp)
@@ -173,54 +168,3 @@ fun getTrainingModels(): List<String> {
     return listOf("Logistic Regression", "Decision Tree", "Naive Bayes", "Random Forest", "KNN")
 }
 
-@Composable
-fun LoadingFrame() {
-
-    val preloaderLottieComposition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.loading)
-    )
-
-    val preloaderProgress by animateLottieCompositionAsState(
-        preloaderLottieComposition,
-        iterations = LottieConstants.IterateForever,
-        isPlaying = true
-    )
-
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = LoaderBackgroundBlue)
-    ) {
-
-        Image(
-            painter = painterResource(id = R.drawable.splash_logo),
-            contentDescription = "app Logo",
-            modifier = Modifier
-                .size(100.dp)
-                .align(Alignment.CenterHorizontally)
-                .padding(horizontal = 16.dp)
-        )
-
-
-        LottieAnimation(
-            composition = preloaderLottieComposition,
-            progress = preloaderProgress,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-        )
-
-        Text(
-            text = stringResource(R.string.training_in_progress_please_wait),
-            textAlign = TextAlign.Center,
-            fontSize = 10.sp,
-            color = HighlightBlue,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(32.dp)
-        )
-
-    }
-
-}

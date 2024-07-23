@@ -6,7 +6,6 @@
 # from sklearn.compose import ColumnTransformer
 # from sklearn.preprocessing import OneHotEncoder
 # from sklearn.pipeline import Pipeline
-import pickle
 
 def test_function(index):
     if (index == 2):

@@ -21,7 +21,7 @@ import com.evosticlabs.apollo.ui.theme.BackgroundBlue
  *@Created by Yerimah on 22/07/2024.
  */
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen() {
 
     Box(
         modifier = Modifier

@@ -1,6 +1,25 @@
 <resources>
     <string name="app_name">Apollo</string>
+
+    <string name="google_api_key">AIzaSyCUdMPkdOazq1mp6ljZZgQQIKwkkpVoYeY</string>
+
     <string name="select_prediction_model">Select Prediction Model</string>
     <string name="select_training_model_to_continue">Select Training Model to Continue</string>
     <string name="training_in_progress_please_wait">Training in progress please wait...</string>
+    <string name="submit">SUBMIT</string>
+    <string name="feature_selection">Feature Selection</string>
+    <string name="prediction_timeframe">Prediction Timeframe</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="location">Location</string>
+    <string name="casualties">Casualties</string>
+    <string name="weapon_type">Weapon Type</string>
+    <string name="target_type">Target Type</string>
+    <string name="attack_type">Attack Type</string>
+    <string name="enter_location">Enter Location</string>
+    <string name="search_ic">Search icon</string>
+
+    <string name="location_details">Location Details</string>
+    <string name="select_address">Select Address</string>
+    <string name="set_location_on_map">Set location on map</string>
 </resources>

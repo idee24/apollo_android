@@ -3,12 +3,14 @@ package com.evosticlabs.apollo.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -55,4 +57,34 @@ fun ApolloTheme(
         typography = Typography,
         content = content
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun appOutlineTextFieldColors(isNotErrorState: Boolean = true): androidx.compose.material3.TextFieldColors  {
+    if (isNotErrorState) {
+        return androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+
+            disabledPlaceholderColor = TextColorDisabled,
+            focusedTextColor = TextBlue,
+            unfocusedTextColor = TextBlue,
+            disabledTextColor = TextColorDisabled,
+            cursorColor = ActionBlue,
+            focusedBorderColor = ActionBlue,
+            unfocusedBorderColor = DormantBlue,
+            containerColor = FieldColor,
+
+        )
+    } else {
+        return androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+
+            disabledPlaceholderColor = Color.Transparent,
+            disabledTextColor = TextColorDisabled,
+            cursorColor = ErrorRed,
+            errorCursorColor = ErrorRed,
+            focusedBorderColor = ErrorRed,
+            unfocusedBorderColor = ErrorRed,
+            containerColor = FieldColor
+            )
+    }
 }
