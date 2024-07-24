@@ -98,10 +98,15 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+
+    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("com.google.android.material:material:1.5.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
+
+
     //compose navigation
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.lottie.compose)
 
     // Material Design 3
     implementation(libs.material3)
@@ -119,5 +124,9 @@ dependencies {
 
     //EasyPrefs
     implementation(libs.easyprefs)
+
+
+    //lottie
+    implementation("com.airbnb.android:lottie:5.2.0")
 
 }

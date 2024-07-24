@@ -52,10 +52,7 @@ import java.util.*
  */
 
 private val addressDisplay = mutableStateOf("")
-private lateinit var fusedLocationClient: FusedLocationProviderClient
 private val displayLocation = mutableStateOf(LatLng(6.5095, 3.3711))
-
-
 
 fun initGeoCoder(context: Context, latLng: LatLng) {
     val geocoder = Geocoder(context, Locale.getDefault())
@@ -64,7 +61,7 @@ fun initGeoCoder(context: Context, latLng: LatLng) {
 }
 
 @Composable
-fun MainContent(mainActivity: MainActivity, ) {
+fun AddressScreen(mainActivity: MainActivity) {
 
     initGeoCoder(mainActivity, displayLocation.value)
 
@@ -80,7 +77,7 @@ fun MainContent(mainActivity: MainActivity, ) {
 //            Manifest.permission.ACCESS_FINE_LOCATION,
 //            Manifest.permission.ACCESS_COARSE_LOCATION))
     }
-    fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
+    mainActivity.fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
         displayLocation.value = LatLng(location?.latitude ?: displayLocation.value.latitude, location?.longitude ?: displayLocation.value.longitude)
         initGeoCoder(mainActivity, displayLocation.value)
     }
@@ -139,7 +136,7 @@ fun MainContent(mainActivity: MainActivity, ) {
                             Manifest.permission.ACCESS_COARSE_LOCATION
                         ) == PackageManager.PERMISSION_GRANTED
                     ) {
-                        fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
+                        mainActivity.fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
                             displayLocation.value = LatLng(location?.latitude ?: displayLocation.value.latitude, location?.longitude ?: displayLocation.value.longitude)
                             initGeoCoder(mainActivity, displayLocation.value)
                         }

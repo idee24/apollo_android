@@ -17,3 +17,9 @@ object Feature
 
 @Serializable
 object Result
+
+@Serializable
+object Address
+
+@Serializable
+object  PlaceAdapter

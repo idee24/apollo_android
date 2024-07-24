@@ -33,109 +33,92 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
+import com.evosticlabs.apollo.MainActivity
 import com.evosticlabs.apollo.R
 import com.evosticlabs.apollo.ui.theme.ActionBlue
 import com.evosticlabs.apollo.ui.theme.BackgroundBlue
-import com.evosticlabs.apollo.screens.Feature
-import com.evosticlabs.apollo.ui.theme.LoaderBackgroundBlue
 import com.evosticlabs.apollo.ui.theme.TextBlue
 
 /**
  *@Created by Yerimah on 22/07/2024.
  */
 @Composable
-fun LandingScreen(context: Context, navToFeature: () -> Unit) {
+fun LandingScreen(context: MainActivity, navToFeature: () -> Unit) {
 
 
-    val isLoading = rememberSaveable { mutableStateOf(false) }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = BackgroundBlue)
+            .padding(top = 16.dp)
+    ) {
 
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        Column(
+        Image(
+            painter = painterResource(id = R.drawable.splash_logo),
+            contentDescription = "app Logo",
             modifier = Modifier
-                .fillMaxSize()
-                .background(color = BackgroundBlue)
-                .padding(top = 16.dp)
-        ) {
+                .size(100.dp)
+                .align(Alignment.CenterHorizontally)
+                .padding(horizontal = 16.dp)
+        )
 
-            Image(
-                painter = painterResource(id = R.drawable.splash_logo),
-                contentDescription = "app Logo",
-                modifier = Modifier
-                    .size(100.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 16.dp)
-            )
-
-            Image(
-                painter = painterResource(id = R.drawable.landing_photo),
-                contentDescription = "app image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 16.dp)
-            )
+        Image(
+            painter = painterResource(id = R.drawable.landing_photo),
+            contentDescription = "app image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+                .padding(horizontal = 16.dp)
+        )
 
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = stringResource(R.string.select_prediction_model),
-                textAlign = TextAlign.Start,
-                fontSize = 12.sp,
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(32.dp)
-            )
+        Text(
+            text = stringResource(R.string.select_prediction_model),
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(32.dp)
+        )
 
-            val selectedModel = rememberSaveable { mutableStateOf("") }
-            getTrainingModels().forEach { trainingModel ->
-                FeatureItem(name = trainingModel, isSelected = selectedModel.value == trainingModel) {
-                    selectedModel.value = trainingModel
-                }
+        val selectedModel = rememberSaveable { mutableStateOf("") }
+        getTrainingModels().forEach { trainingModel ->
+            FeatureItem(name = trainingModel, isSelected = selectedModel.value == trainingModel) {
+                selectedModel.value = trainingModel
             }
+        }
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-            Image(
-                painter = painterResource(id = R.drawable.train_button),
-                contentDescription = "train_button",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 16.dp)
-                    .clickable {
-                        if (selectedModel.value.isNotEmpty()) {
-                            isLoading.value = true
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                isLoading.value = false
-                                navToFeature.invoke()
-                            }, 5000)
-                        } else {
-                            Toast
-                                .makeText(
-                                    context,
-                                    context.getString(R.string.select_training_model_to_continue),
-                                    Toast.LENGTH_SHORT
-                                )
-                                .show()
-                        }
+        Image(
+            painter = painterResource(id = R.drawable.train_button),
+            contentDescription = "train_button",
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(horizontal = 16.dp)
+                .clickable {
+                    if (selectedModel.value.isNotEmpty()) {
+                        context.showLoader()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            navToFeature.invoke()
+                        }, 5000)
+                    } else {
+                        Toast
+                            .makeText(
+                                context,
+                                context.getString(R.string.select_training_model_to_continue),
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
                     }
-            )
+                }
+        )
 
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-        }
-
-        if (isLoading.value) {
-            LoadingFrame(context.getString(R.string.training_in_progress_please_wait))
-        }
     }
 
 }

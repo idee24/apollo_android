@@ -66,7 +66,9 @@ import java.util.Calendar
 
 
 @Composable
-fun FeatureScreen(context: Context, navToResult: () -> Unit) {
+fun FeatureScreen(context: Context,
+                  navToResult: () -> Unit,
+                  navToAddress: () -> Unit) {
 
     val calendar = Calendar.getInstance()
     val startDate = rememberSaveable { mutableStateOf( "") }
@@ -235,6 +237,9 @@ fun FeatureScreen(context: Context, navToResult: () -> Unit) {
                                     shape = RoundedCornerShape(8.dp)
                                 )
                                 .background(color = FieldColor, shape = RoundedCornerShape(8.dp))
+                                .clickable {
+                                    navToAddress.invoke()
+                                }
                         ) {
 
                             Text(
@@ -363,7 +368,8 @@ fun FeatureScreen(context: Context, navToResult: () -> Unit) {
                 .padding(16.dp)
                 .height(50.dp)
                 .border(width = 2.dp, shape = RoundedCornerShape(8.dp), color = ButtonBorderColor)
-                .background(color = ButtonColor, shape = RoundedCornerShape(8.dp)),
+                .background(color = ButtonColor, shape = RoundedCornerShape(8.dp))
+                .clickable { navToResult.invoke() },
         ){
             Text(
                 text = stringResource(R.string.submit),
