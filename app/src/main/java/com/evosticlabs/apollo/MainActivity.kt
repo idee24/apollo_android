@@ -65,13 +65,13 @@ class MainActivity : ComponentActivity() {
                 Box(Modifier.fillMaxSize()) {
                     NavHost(
                         navController = navController,
-                        startDestination = Splash
+                        startDestination = Landing
                     ) {
                         composable<Splash> {
                             SplashScreen()
                             Handler(Looper.getMainLooper()).postDelayed({
                                 navController.navigate(Landing)
-                            }, 5000)
+                            }, 3000)
                         }
                         composable<Landing> {
                             LandingScreen(this@MainActivity) {

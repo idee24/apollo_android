@@ -37,6 +37,8 @@ import com.evosticlabs.apollo.MainActivity
 import com.evosticlabs.apollo.R
 import com.evosticlabs.apollo.ui.theme.ActionBlue
 import com.evosticlabs.apollo.ui.theme.BackgroundBlue
+import com.evosticlabs.apollo.ui.theme.ButtonBorderColor
+import com.evosticlabs.apollo.ui.theme.ButtonColor
 import com.evosticlabs.apollo.ui.theme.TextBlue
 
 /**
@@ -53,34 +55,39 @@ fun LandingScreen(context: MainActivity, navToFeature: () -> Unit) {
             .padding(top = 16.dp)
     ) {
 
-        Image(
-            painter = painterResource(id = R.drawable.splash_logo),
-            contentDescription = "app Logo",
-            modifier = Modifier
-                .size(100.dp)
-                .align(Alignment.CenterHorizontally)
-                .padding(horizontal = 16.dp)
-        )
-
-        Image(
-            painter = painterResource(id = R.drawable.landing_photo),
-            contentDescription = "app image",
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-                .padding(horizontal = 16.dp)
-        )
-
-
         Spacer(modifier = Modifier.weight(1f))
+
+        Box {
+            Image(
+                painter = painterResource(id = R.drawable.splash_logo),
+                contentDescription = "app Logo",
+                modifier = Modifier
+                    .size(width = 200.dp, height = 100.dp)
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 16.dp)
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.landing_photo),
+                contentDescription = "app image",
+                modifier = Modifier
+                    .size(width = 700.dp, height = 350.dp)
+                    .padding(horizontal = 16.dp)
+            )
+
+        }
+
+
 
         Text(
             text = stringResource(R.string.select_prediction_model),
             textAlign = TextAlign.Start,
             fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            color = TextBlue,
             modifier = Modifier
                 .align(Alignment.Start)
-                .padding(32.dp)
+                .padding(horizontal = 24.dp)
         )
 
         val selectedModel = rememberSaveable { mutableStateOf("") }
@@ -96,6 +103,7 @@ fun LandingScreen(context: MainActivity, navToFeature: () -> Unit) {
             painter = painterResource(id = R.drawable.train_button),
             contentDescription = "train_button",
             modifier = Modifier
+                .size(height = 80.dp, width = 700.dp)
                 .align(Alignment.CenterHorizontally)
                 .padding(horizontal = 16.dp)
                 .clickable {
@@ -131,17 +139,17 @@ fun FeatureItem(name: String,
     Text(
         text = name,
         fontSize = 12.sp,
-        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         color = TextBlue,
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .border(width = 1.dp, color = TextBlue, shape = RoundedCornerShape(8.dp))
+            .border(width = 1.dp, color = ButtonBorderColor, shape = RoundedCornerShape(4.dp))
             .background(
-                color = if (isSelected) ActionBlue else BackgroundBlue,
-                shape = RoundedCornerShape(8.dp)
+                color = if (isSelected) ActionBlue else ButtonColor,
+                shape = RoundedCornerShape(1.dp)
             )
-            .padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
+            .padding(horizontal = 12.dp, vertical = 12.dp)
             .clickable { onSelect.invoke(name) }
     )
 
