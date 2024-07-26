@@ -62,9 +62,9 @@ android {
 chaquopy {
     defaultConfig {
         pip {
-            // A requirement specifier, with or without a version number:
-//            install("scipy")
-//            install("requests==2.24.0")
+//             A requirement specifier, with or without a version number:
+            install("scipy")
+            install("requests==2.24.0")
 
             // An sdist or wheel filename, relative to the project directory:
 //            install("MyPackage-1.2.3-py2.py3-none-any.whl")
@@ -125,8 +125,10 @@ dependencies {
     //EasyPrefs
     implementation(libs.easyprefs)
 
-
     //lottie
     implementation("com.airbnb.android:lottie:5.2.0")
+
+    //MPChart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 }

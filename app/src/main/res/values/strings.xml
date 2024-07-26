@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Apollo</string>
 
-    <string name="google_api_key">AIzaSyCUdMPkdOazq1mp6ljZZgQQIKwkkpVoYeY</string>
+    <string name="google_api_key">AIzaSyBttDIyBYlSuzrYXU25r9x5_S2cckp_nPs</string>
 
     <string name="select_prediction_model">Select Prediction Model</string>
     <string name="select_training_model_to_continue">Select Training Model to Continue</string>
@@ -22,4 +22,5 @@
     <string name="location_details">Location Details</string>
     <string name="select_address">Select Address</string>
     <string name="set_location_on_map">Set location on map</string>
+    <string name="done">DONE</string>
 </resources>

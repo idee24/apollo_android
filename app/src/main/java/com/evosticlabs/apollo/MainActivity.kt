@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                 Box(Modifier.fillMaxSize()) {
                     NavHost(
                         navController = navController,
-                        startDestination = Landing
+                        startDestination = Feature
                     ) {
                         composable<Splash> {
                             SplashScreen()
@@ -98,7 +98,9 @@ class MainActivity : ComponentActivity() {
                             PlaceAdapterScreen(mainActivity = this@MainActivity)
                         }
                         composable<Result> {
-                            ResultScreen(navController)
+                            ResultScreen{
+                                navController.navigate(Landing)
+                            }
                         }
 
                     }
