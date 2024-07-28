@@ -179,6 +179,7 @@ fun ResultScreen(navToLanding: () -> Unit) {
 
                     val data = LineData(dataSets)
                     chart.setData(data)
+                    chart.animateXY(3000, 3000)
                     chart.invalidate()
                 }
             )

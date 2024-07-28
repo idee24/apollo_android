@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.evosticlabs.apollo.MainActivity
 import com.evosticlabs.apollo.R
 import com.evosticlabs.apollo.ui.theme.BackgroundBlue
 import com.evosticlabs.apollo.ui.theme.ButtonBorderColor
@@ -66,13 +67,13 @@ import java.util.Calendar
 
 
 @Composable
-fun FeatureScreen(context: Context,
+fun FeatureScreen(context: MainActivity,
                   navToResult: () -> Unit,
                   navToAddress: () -> Unit) {
 
     val calendar = Calendar.getInstance()
-    val startDate = rememberSaveable { mutableStateOf( "") }
-    val endDate = rememberSaveable { mutableStateOf( "") }
+    val startDate = rememberSaveable { mutableStateOf( context.startDate.value) }
+    val endDate = rememberSaveable { mutableStateOf( context.EndDate.value) }
 
     val year = calendar[Calendar.YEAR]
     val month = calendar[Calendar.MONTH]
@@ -82,6 +83,7 @@ fun FeatureScreen(context: Context,
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
             startDate.value = "$selectedDayOfMonth - ${selectedMonth + 1} - $selectedYear"
+            context.startDate.value = startDate.value
         }, year, month, dayOfMonth
     )
 
@@ -89,10 +91,11 @@ fun FeatureScreen(context: Context,
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
             endDate.value = "$selectedDayOfMonth - ${selectedMonth + 1} - $selectedYear"
+            context.EndDate.value = endDate.value
         }, year, month, dayOfMonth
     )
 
-    val location =  rememberSaveable { mutableStateOf( "") }
+    val location =  rememberSaveable { mutableStateOf(context.addressDisplay.value) }
 
     Column(
         modifier = Modifier
@@ -270,7 +273,7 @@ fun FeatureScreen(context: Context,
                                 .padding(start = 16.dp)
                         )
 
-                        val casualty = rememberSaveable{ mutableStateOf("Default") }
+                        val casualty = rememberSaveable{ mutableStateOf(context.casualties.value) }
                         val casualtyTypes = getCasualtyTypes()
 
                         CustomSpinner(
@@ -281,6 +284,7 @@ fun FeatureScreen(context: Context,
                             initialSelection = 0
                         ) {
                             casualty.value = casualtyTypes[it]
+                            context.casualties.value = casualty.value
                         }
 
                         Text(
@@ -294,7 +298,7 @@ fun FeatureScreen(context: Context,
                                 .padding(start = 16.dp)
                         )
 
-                        val attackType = rememberSaveable{ mutableStateOf("Default") }
+                        val attackType = rememberSaveable{ mutableStateOf(context.attackType.value) }
                         val attackTypes = getAttackTypes()
 
                         CustomSpinner(
@@ -305,6 +309,7 @@ fun FeatureScreen(context: Context,
                             initialSelection = 0
                         ) {
                             attackType.value = attackTypes[it]
+                            context.attackType.value = attackType.value
                         }
 
                         Text(
@@ -318,7 +323,7 @@ fun FeatureScreen(context: Context,
                                 .padding(start = 16.dp)
                         )
 
-                        val target = rememberSaveable{ mutableStateOf("Default") }
+                        val target = rememberSaveable{ mutableStateOf(context.targetType.value) }
                         val targetTypes = getTargetTypes()
 
                         CustomSpinner(
@@ -329,6 +334,7 @@ fun FeatureScreen(context: Context,
                             initialSelection = 0
                         ) {
                             target.value = targetTypes[it]
+                            context.targetType.value = target.value
                         }
 
                         Text(
@@ -342,7 +348,7 @@ fun FeatureScreen(context: Context,
                                 .padding(start = 16.dp)
                         )
 
-                        val weaponsType = rememberSaveable{ mutableStateOf("Default") }
+                        val weaponsType = rememberSaveable{ mutableStateOf(context.weaponsType.value) }
                         val weaponsTypes = getWeaponsTypes()
 
                         CustomSpinner(
@@ -353,6 +359,7 @@ fun FeatureScreen(context: Context,
                             initialSelection = 0
                         ) {
                             weaponsType.value = weaponsTypes[it]
+                            context.weaponsType.value = weaponsType.value
                         }
 
                         Spacer(modifier = Modifier.padding(40.dp))
