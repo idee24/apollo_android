@@ -63,8 +63,11 @@ chaquopy {
     defaultConfig {
         pip {
 //             A requirement specifier, with or without a version number:
-            install("scipy")
-            install("requests==2.24.0")
+            install("pandas")
+            install("pydantic<2")
+            install("openai")
+            install("scikit-learn")
+            install("pickle-mixin")
 
             // An sdist or wheel filename, relative to the project directory:
 //            install("MyPackage-1.2.3-py2.py3-none-any.whl")

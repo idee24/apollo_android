@@ -1,47 +1,40 @@
 package com.evosticlabs.apollo
 
 import android.app.Activity
-import android.content.Intent
+import android.content.res.AssetManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import com.evosticlabs.apollo.ui.theme.ApolloTheme
-import kotlinx.serialization.Serializable
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
 import com.evosticlabs.apollo.screens.Address
 import com.evosticlabs.apollo.screens.Feature
 import com.evosticlabs.apollo.screens.FeatureScreen
 import com.evosticlabs.apollo.screens.Landing
-import com.evosticlabs.apollo.screens.Result
 import com.evosticlabs.apollo.screens.LandingScreen
 import com.evosticlabs.apollo.screens.LoadingFrame
-import com.evosticlabs.apollo.screens.PlaceAdapter
+import com.evosticlabs.apollo.screens.Result
 import com.evosticlabs.apollo.screens.ResultScreen
 import com.evosticlabs.apollo.screens.Splash
 import com.evosticlabs.apollo.screens.SplashScreen
 import com.evosticlabs.apollo.screens.address.AddressScreen
 import com.evosticlabs.apollo.screens.address.placeAdder
+import com.evosticlabs.apollo.ui.theme.ApolloTheme
 import com.evosticlabs.apollo.utils.hideKeyboard
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -49,6 +42,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 class MainActivity : ComponentActivity() {
@@ -91,6 +87,8 @@ class MainActivity : ComponentActivity() {
         Places.initialize(applicationContext, getString(R.string.google_api_key))
         placesClient = Places.createClient(this)
         enableEdgeToEdge()
+        if (!Python.isStarted()) Python.start(AndroidPlatform(this))
+        initApollo()
         setContent {
 
             var showLoader = rememberSaveable { isLoading }
@@ -149,6 +147,51 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun initApollo() {
+        val py = Python.getInstance()
+        val mod = py.getModule("test_draft")
+
+//        val file = File("gtd_1.csv")
+//
+//
+//        val fileTemp = File("temp")
+//        val filePath = "/data/data/com.evosticlabs.apollo/gtd_1.csv"
+//
+//        val assetStream = applicationContext.assets.open("44.PNG")
+//
+//
+//
+//        val temp = File(filePath)
+//        println("DDLS Handshake output ==> " + temp.isFile + "-----" + fileTemp.isFile)
+
+        val path = copyRawResourceToInternalStorage()
+        println("DDLS Handshake output ==> " + path)
+        val res = mod.callAttr("initApollo", path)
+    }
+
+    private fun copyRawResourceToInternalStorage(): String {
+        val inputStream = resources.openRawResource(R.raw.gtd_1)
+        var outputStream: FileOutputStream? = null
+        try {
+            val outFile = File(filesDir, "gtd_1.csv")
+            outputStream = FileOutputStream(outFile)
+            val buffer = ByteArray(1024)
+            var read: Int
+            while ((inputStream.read(buffer).also { read = it }) != -1) {
+                outputStream.write(buffer, 0, read)
+            }
+            inputStream.close()
+            outputStream.flush()
+            outputStream.close()
+
+            // Get the file path
+            return outFile.absolutePath
+        } catch (e: IOException) {
+            return ""
+            e.printStackTrace()
+        }
+    }
+
     fun showLoader() {
         this.actionBar?.customView?.hideKeyboard()
         isLoading.value = true
@@ -158,6 +201,5 @@ class MainActivity : ComponentActivity() {
         isLoading.value = false
     }
 }
-
 
 
