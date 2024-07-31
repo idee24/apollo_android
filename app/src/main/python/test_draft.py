@@ -301,6 +301,7 @@ def initApollo(filePath):
 
         return response.choices[0].message.content
 
+
     # Analyze the time series
     analysis_summary = analyze_time_series(time_series_df)
     print("Analysis Summary:\n", analysis_summary)
