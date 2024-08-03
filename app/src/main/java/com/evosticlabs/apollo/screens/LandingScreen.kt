@@ -90,10 +90,11 @@ fun LandingScreen(context: MainActivity, navToFeature: () -> Unit) {
                 .padding(horizontal = 24.dp)
         )
 
-        val selectedModel = rememberSaveable { mutableStateOf("") }
+        val selectedModel = rememberSaveable { mutableStateOf("Random Forest") }
         getTrainingModels().forEach { trainingModel ->
             FeatureItem(name = trainingModel, isSelected = selectedModel.value == trainingModel) {
-                selectedModel.value = trainingModel
+//                selectedModel.value = trainingModel
+                selectedModel.value = "Random Forest"
             }
         }
 
@@ -111,7 +112,7 @@ fun LandingScreen(context: MainActivity, navToFeature: () -> Unit) {
                         context.showLoader()
                         Handler(Looper.getMainLooper()).postDelayed({
                             navToFeature.invoke()
-                        }, 5000)
+                        }, 2000)
                     } else {
                         Toast
                             .makeText(

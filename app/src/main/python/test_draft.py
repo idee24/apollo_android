@@ -7,9 +7,11 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
 import pickle
+import json
+from typing import Dict
 
 
-def initApollo(filePath):
+def initApollo(filePath, start_date, end_date, casualties, targetType, weaponsType, attackType, country):
     # Load and preprocess the data
     gtd = pd.read_csv(filePath, encoding='ISO-8859-1', low_memory=False)
     columns = ['iyear', 'imonth', 'iday', 'country_txt', 'region_txt', 'attacktype1_txt', 'targtype1_txt', 'weaptype1_txt', 'nkill', 'nwound', 'success']
@@ -32,7 +34,8 @@ def initApollo(filePath):
         remainder='passthrough'  # To keep the other columns ('iyear', 'imonth', 'iday', 'nkill', 'nwound')
     )
 
-    # Create a pipeline with the preprocessor and the model
+
+# Create a pipeline with the preprocessor and the model
     pipeline = Pipeline(steps=[
         ('preprocessor', preprocessor),
         ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))
@@ -49,34 +52,26 @@ def initApollo(filePath):
     print(f'Accuracy: {accuracy_score(y_test, y_pred)}')
     print(f'Classification Report:\n{classification_report(y_test, y_pred)}')
 
-    # # Save the pipeline
-    # with open('pipeline.pkl', 'wb') as pipeline_file:
-    #     pickle.dump(pipeline, pipeline_file)
-
-
 
     features =  {
-        "iyear": 2024,
-        "imonth": 6,
-        "iday": 15,
-        "nkill": 5,
-        "nwound": 10,
-        "country_txt": 1,
-        "country_txt_India": 0,
-        "country_txt_Iraq": 0,
+        "iyear": 0,
+        "imonth": 0,
+        "iday": 0,
+        "nkill": casualties,
+        "nwound": casualties,
+        "country_txt": 0,
         "region_txt_Middle East & North Africa": 1,
         "region_txt": 0,
         "attacktype1_txt_Assassination": 1,
         "attacktype1_txt_Bombing/Explosion": 0,
         "targtype1_txt_Military": 1,
-        "targtype1_txt":1,
+        "targtype1_txt":targetType,
         "targtype1_txt_Civilians": 0,
         "weaptype1_txt_Explosives": 1,
-        "weaptype1_txt": 0,
-        "attacktype1_txt_Hostage (Kidnapping)": 1,
+        "weaptype1_txt": weaponsType,
         "attacktype1_txt_Armed": 0,
         "attacktype1_txt_Facility/Infrastructure Attack":1,
-        "attacktype1_txt":0,
+        "attacktype1_txt":attackType,
         "attacktype1_txt_Hostage (Barricade Incident)":0,
         "":1
     }
@@ -114,69 +109,15 @@ def initApollo(filePath):
     print('prediction_probability ==> ' + str(prediction_proba[0].tolist()))
     print('feature_importances ==> ' + str(feature_importances.tolist()))
 
+    client = OpenAI(api_key="")
 
-
-    def generate_explanation(prediction, prediction_proba, feature_importances, feature_names):
-        """
-        Generate a natural language explanation of the model's prediction.
-
-        :param prediction: The predicted class.
-        :param prediction_proba: The prediction probabilities for each class.
-        :param feature_importances: The importance of each feature.
-        :param feature_names: The names of the features.
-        :return: A string explanation.
-        """
-        explanation = f"The model predicts that the attack will {'succeed' if prediction[0] == 1 else 'fail'} with a probability of {prediction_proba[0][prediction[0]]:.2f}.\n"
-        explanation += "The most influential factors in this prediction are:\n"
-
-        # Get the indices of the most important features
-        top_features_indices = sorted(range(len(feature_importances)), key=lambda i: feature_importances[i], reverse=True)[:5]
-
-        for i in top_features_indices:
-            explanation += f"- {feature_names[i]}: {feature_importances[i]:.2f}\n"
-
-        return explanation
-
-    # Feature names based on the columns used in the model
-    # Assuming OneHotEncoder was used, get the feature names after transformation
-    one_hot_feature_names = pipeline.named_steps['preprocessor'].named_transformers_['cat'].get_feature_names_out(categorical_features).tolist()
-    feature_names = one_hot_feature_names + ['iyear', 'imonth', 'iday', 'nkill', 'nwound']
-
-    # Generate the explanation
-    explanation = generate_explanation(prediction, prediction_proba, feature_importances, feature_names)
-    print(explanation)
-
-
-
-    client = OpenAI(api_key="sk-proj-8jxiXDQR764dUAf1SscLT3BlbkFJFHgIezfJ2WmzRi4ysUfd")
-
-    def refine_explanation_with_llm(raw_explanation):
-        """
-        Refine the raw explanation using a language model.
-
-        :param raw_explanation: The raw explanation text.
-        :return: A refined explanation.
-        """
-
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are an expert in explaining machine learning models to non-experts."},
-                {"role": "user", "content": f"Explain the following machine learning model prediction in simple terms for policy makers:\n\n{raw_explanation}\n\nRefined Explanation:"}
-            ],
-            max_tokens=150,
-            temperature=0.7
-        )
-
-        return response.choices[0].message.content
-
-    # Generate the explanation
-    explanation = generate_explanation(prediction, prediction_proba, feature_importances, feature_names)
-    print("Raw Explanation:\n", explanation)
-
-    # Refine the explanation
-    refined_explanation = refine_explanation_with_llm(explanation)
-    print("\n\n\nRefined Explanation:\n", refined_explanation)
+    def get_time_series_from_dataframe(df: pd.DataFrame) -> Dict[str, float]:
+        time_series = {}
+        for _, row in df.iterrows():
+            date = row['Date'].strftime('%Y-%m-%d')
+            probability = row['Probability']
+            time_series[date] = probability
+        return time_series
 
 
 
@@ -220,24 +161,6 @@ def initApollo(filePath):
             dates.append(single_date)
 
         return pd.DataFrame({'Date': dates, 'Probability': probabilities})
-
-    # Example features
-    features = {
-        "iyear": 2024,
-        "imonth": 6,
-        "iday": 15,
-        "nkill": 5,
-        "nwound": 10,
-        "country_txt": '1',
-        'location': '',
-        "region_txt": 'Middle East & North Africa',
-        "attacktype1_txt": 'Bombing/Explosion',
-        "targtype1_txt": 'Military',
-        "weaptype1_txt": 'Explosives'
-    }
-
-    start_date = '2023-01-01'
-    end_date = '2023-12-31'
 
     time_series_df = generate_time_series_predictions(pipeline, features, start_date, end_date)
     print(time_series_df)
@@ -309,4 +232,17 @@ def initApollo(filePath):
     # Generate a refined explanation using the LLM
     refined_summary = summarize_time_series_with_llm(analysis_summary)
     print("Refined Summary:\n", refined_summary)
+
+    prediction_result = {
+        "code": 200,
+        "message": "Prediction successful",
+        "prediction": {
+            "featureImportance": f'Classification Report:\n{classification_report(y_test, y_pred)}',
+            "timeSeries": get_time_series_from_dataframe(time_series_df),
+            "analysisSummary": analysis_summary,
+            "refinedSummary": refined_summary
+        }
+    }
+    return json.dumps(prediction_result, indent=4)
+
 

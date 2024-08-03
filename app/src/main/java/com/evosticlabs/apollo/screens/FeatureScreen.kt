@@ -2,6 +2,8 @@ package com.evosticlabs.apollo.screens
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -73,7 +75,7 @@ fun FeatureScreen(context: MainActivity,
 
     val calendar = Calendar.getInstance()
     val startDate = rememberSaveable { mutableStateOf( context.startDate.value) }
-    val endDate = rememberSaveable { mutableStateOf( context.EndDate.value) }
+    val endDate = rememberSaveable { mutableStateOf( context.endDate.value) }
 
     val year = calendar[Calendar.YEAR]
     val month = calendar[Calendar.MONTH]
@@ -82,7 +84,7 @@ fun FeatureScreen(context: MainActivity,
     val startPicker = DatePickerDialog(
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-            startDate.value = "$selectedDayOfMonth - ${selectedMonth + 1} - $selectedYear"
+            startDate.value = "$selectedYear-${selectedMonth + 1}-$selectedDayOfMonth"
             context.startDate.value = startDate.value
         }, year, month, dayOfMonth
     )
@@ -90,8 +92,8 @@ fun FeatureScreen(context: MainActivity,
     val endPicker = DatePickerDialog(
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-            endDate.value = "$selectedDayOfMonth - ${selectedMonth + 1} - $selectedYear"
-            context.EndDate.value = endDate.value
+            endDate.value = "$selectedYear-${selectedMonth + 1}-$selectedDayOfMonth"
+            context.endDate.value = endDate.value
         }, year, month, dayOfMonth
     )
 
@@ -378,7 +380,12 @@ fun FeatureScreen(context: MainActivity,
                 .height(50.dp)
                 .border(width = 2.dp, shape = RoundedCornerShape(8.dp), color = ButtonBorderColor)
                 .background(color = ButtonColor, shape = RoundedCornerShape(8.dp))
-                .clickable { navToResult.invoke() },
+                .clickable {
+                    context.showLoader()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        navToResult.invoke()
+                    }, 500)
+                },
         ){
             Text(
                 text = stringResource(R.string.submit),

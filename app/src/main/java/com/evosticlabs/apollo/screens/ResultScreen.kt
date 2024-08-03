@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.evosticlabs.apollo.MainActivity
 import com.evosticlabs.apollo.R
 import com.evosticlabs.apollo.ui.theme.BackgroundBlue
 import com.evosticlabs.apollo.ui.theme.ButtonBorderColor
@@ -54,8 +55,10 @@ import java.text.StringCharacterIterator
  *@Created by Yerimah on 22/07/2024.
  */
 @Composable
-fun ResultScreen(navToLanding: () -> Unit) {
+fun ResultScreen(mainActivity: MainActivity, navToLanding: () -> Unit) {
 
+//    mainActivity.hideLoader()
+    val prediction = mainActivity.results.value.prediction
 
     Column(
         modifier = Modifier
@@ -143,34 +146,26 @@ fun ResultScreen(navToLanding: () -> Unit) {
                     chart.setGridBackgroundColor(context.getColor(R.color.black))
                     chart.setBackgroundColor(context.getColor(R.color.black))
                     chart.setNoDataTextColor(context.getColor(R.color.graph_text_color))
-                    view
 
-                },
-                update = { view ->
-                    val chart = view.findViewById<LineChart>(R.id.lineChart)
 
                     chart.resetTracking()
 
                     val dataSets = ArrayList<ILineDataSet>()
 
-                    for (z in 0..2) {
-                        val values = ArrayList<Entry>()
+                    val values = ArrayList<Entry>()
 
-                        for (i in 0 until 10) {
-                            val `val`: Double = (Math.random() * 5) + 3
-                            values.add(Entry(i.toFloat(), `val`.toFloat()))
-                        }
-
-                        val d = LineDataSet(values, "DataSet " + (z + 1))
-                        d.lineWidth = 2.5f
-                        d.circleRadius = 4f
-
-                        val color: Int = colors.get(z % colors.size)
-                        d.color = color
-                        d.setCircleColor(color)
-                        dataSets.add(d)
+                    prediction?.timeSeries?.values?.indices?.forEachIndexed { index, prob ->
+                        values.add(Entry(index.toFloat(), prob.toFloat()))
                     }
 
+                    val d = LineDataSet(values, "Probabilities DataSet")
+                    d.lineWidth = 2.5f
+                    d.circleRadius = 4f
+
+                    val color: Int = colors.get(2 % colors.size)
+                    d.color = color
+                    d.setCircleColor(color)
+                    dataSets.add(d)
 
                     // make the first DataSet dashed
                     (dataSets[0] as LineDataSet).enableDashedLine(10f, 10f, 0f)
@@ -181,7 +176,15 @@ fun ResultScreen(navToLanding: () -> Unit) {
                     chart.setData(data)
                     chart.animateXY(3000, 3000)
                     chart.invalidate()
-                }
+
+                    view
+
+                },
+//                update = { view ->
+//                    val chart = view.findViewById<LineChart>(R.id.lineChart)
+//
+//
+//                }
             )
 
         }
@@ -202,13 +205,8 @@ fun ResultScreen(navToLanding: () -> Unit) {
         ) {
 
 
-            val text1 = "This text animates as though it is being typed \uD83E\uDDDE\u200D♀\uFE0F \uD83D\uDD10  \uD83D\uDC69\u200D❤\uFE0F\u200D\uD83D\uDC68 \uD83D\uDC74\uD83C\uDFFD"
-            val text2 = "This text animates as though it is being typed \uD83E\uDDDE\u200D♀\uFE0F \uD83D\uDD10  \uD83D\uDC69\u200D❤\uFE0F\u200D\uD83D\uDC68 \uD83D\uDC74\uD83C\uDFFD"
 
-            var text = (text2 + text1)
-            for (x in 1..5){
-                text = (text + text)
-            }
+            val text = "${if (prediction?.analysisSummary == null) "" else prediction.analysisSummary}\n${if (prediction?.refinedSummary == null) "" else prediction.refinedSummary}\n${prediction?.featureImportance}"
 
             // Iterate over the characters.
             val breakIterator = remember(text) { BreakIterator.getCharacterInstance() }
@@ -221,7 +219,7 @@ fun ResultScreen(navToLanding: () -> Unit) {
             var substringText = remember { mutableStateOf("") }
             LaunchedEffect(text) {
                 // Initial start delay of the typing animation
-                delay(1000)
+                delay(200)
                 breakIterator.text = StringCharacterIterator(text)
 
                 var nextIndex = breakIterator.next()
@@ -238,7 +236,7 @@ fun ResultScreen(navToLanding: () -> Unit) {
                 fontSize = 12.sp,
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold,
-                maxLines = 40,
+                maxLines = 100,
                 color = TextBlue,
                 modifier = Modifier
                     .padding(16.dp)

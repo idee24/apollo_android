@@ -78,6 +78,7 @@ fun initGeoCoder(context: MainActivity, latLng: LatLng) {
     val geocoder = Geocoder(context, Locale.getDefault())
     val addresses: List<Address>? = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
     context.addressDisplay.value = addresses?.get(0)?.getAddressLine(0) ?: ""
+    context.displayLocation.value = latLng
 }
 
 @Composable

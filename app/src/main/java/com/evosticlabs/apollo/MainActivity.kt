@@ -1,22 +1,24 @@
 package com.evosticlabs.apollo
 
 import android.app.Activity
-import android.content.res.AssetManager
+import android.content.DialogInterface
+import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -34,6 +36,10 @@ import com.evosticlabs.apollo.screens.Splash
 import com.evosticlabs.apollo.screens.SplashScreen
 import com.evosticlabs.apollo.screens.address.AddressScreen
 import com.evosticlabs.apollo.screens.address.placeAdder
+import com.evosticlabs.apollo.screens.getAttackTypes
+import com.evosticlabs.apollo.screens.getCasualtyTypes
+import com.evosticlabs.apollo.screens.getTargetTypes
+import com.evosticlabs.apollo.screens.getWeaponsTypes
 import com.evosticlabs.apollo.ui.theme.ApolloTheme
 import com.evosticlabs.apollo.utils.hideKeyboard
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -42,9 +48,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
+import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.Locale
 
 
 class MainActivity : ComponentActivity() {
@@ -52,11 +61,12 @@ class MainActivity : ComponentActivity() {
     val addressDisplay = mutableStateOf("")
     val displayLocation = mutableStateOf(LatLng(51.5072, 0.1276))
     val startDate = mutableStateOf("")
-    val EndDate = mutableStateOf("")
+    val endDate = mutableStateOf("")
     val attackType = mutableStateOf("Default")
     val weaponsType = mutableStateOf("Default")
     val casualties = mutableStateOf("Default")
     val targetType = mutableStateOf("Default")
+    val results = mutableStateOf(PredictionResult())
 
 
 
@@ -88,7 +98,6 @@ class MainActivity : ComponentActivity() {
         placesClient = Places.createClient(this)
         enableEdgeToEdge()
         if (!Python.isStarted()) Python.start(AndroidPlatform(this))
-        initApollo()
         setContent {
 
             var showLoader = rememberSaveable { isLoading }
@@ -121,7 +130,11 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate(Address)
                                 },
                                 navToResult = {
-                                    navController.navigate(Result)
+                                    lifecycleScope.launch {
+                                        initApollo {
+                                            navController.navigate(Result)
+                                        }
+                                    }
                                 }
                             )
                         }
@@ -131,7 +144,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable<Result> {
-                            ResultScreen{
+                            ResultScreen(this@MainActivity) {
                                 navController.navigate(Landing)
                             }
                         }
@@ -147,26 +160,51 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun initApollo() {
+    private fun getCountry(latLng: LatLng): String {
+        val geocoder = Geocoder(this, Locale.getDefault())
+        val addresses: List<android.location.Address>? = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+        return addresses?.get(0)?.countryName ?: ""
+    }
+
+    private fun initApollo(navToResult: () -> Unit) {
         val py = Python.getInstance()
         val mod = py.getModule("test_draft")
 
-//        val file = File("gtd_1.csv")
-//
-//
-//        val fileTemp = File("temp")
-//        val filePath = "/data/data/com.evosticlabs.apollo/gtd_1.csv"
-//
-//        val assetStream = applicationContext.assets.open("44.PNG")
-//
-//
-//
-//        val temp = File(filePath)
-//        println("DDLS Handshake output ==> " + temp.isFile + "-----" + fileTemp.isFile)
 
         val path = copyRawResourceToInternalStorage()
-        println("DDLS Handshake output ==> " + path)
-        val res = mod.callAttr("initApollo", path)
+        val res = mod.callAttr(
+            "initApollo",
+            path,
+            startDate.value,
+            endDate.value,
+            getCasualtyTypes().indexOf(casualties.value),
+            getTargetTypes().indexOf(targetType.value),
+            getWeaponsTypes().indexOf(weaponsType.value),
+            getAttackTypes().indexOf(attackType.value),
+            getCountry(displayLocation.value)
+        )
+
+        println("DDLS Prediction ==> $res")
+
+        val predictionResult = Gson().fromJson(res.toString(), PredictionResult::class.java)
+        if (predictionResult != null) {
+            if (predictionResult.code == 200) {
+                results.value = predictionResult
+                navToResult.invoke()
+            }
+            else {
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.error))
+                    .setMessage(predictionResult.message)
+                    .show()
+            }
+        }
+        else {
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.error))
+                .setMessage(getString(R.string.classification_error_occurred))
+                .show()
+        }
     }
 
     private fun copyRawResourceToInternalStorage(): String {
@@ -187,8 +225,12 @@ class MainActivity : ComponentActivity() {
             // Get the file path
             return outFile.absolutePath
         } catch (e: IOException) {
-            return ""
             e.printStackTrace()
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.error))
+                .setMessage(e.message)
+                .show()
+            return ""
         }
     }
 
@@ -200,6 +242,20 @@ class MainActivity : ComponentActivity() {
     fun hideLoader() {
         isLoading.value = false
     }
+
 }
 
+
+data class PredictionResult(
+    var code: Int = 400,
+    var message: String = "NaN",
+    var prediction: Prediction? = null
+)
+
+data class Prediction(
+    var featureImportance: String,
+    var timeSeries: LinkedHashMap<String, Double>,
+    var analysisSummary: String,
+    var refinedSummary: String
+)
 

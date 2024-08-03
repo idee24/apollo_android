@@ -5,7 +5,7 @@
 
     <string name="select_prediction_model">Select Prediction Model</string>
     <string name="select_training_model_to_continue">Select Training Model to Continue</string>
-    <string name="training_in_progress_please_wait">Training in progress please wait...</string>
+    <string name="training_in_progress_please_wait">Loading, please wait…</string>
     <string name="submit">SUBMIT</string>
     <string name="feature_selection">Feature Selection</string>
     <string name="prediction_timeframe">Prediction Timeframe</string>
@@ -19,8 +19,11 @@
     <string name="enter_location">Enter Location</string>
     <string name="search_ic">Search icon</string>
 
+
     <string name="location_details">Location Details</string>
     <string name="select_address">Select Address</string>
     <string name="set_location_on_map">Set location on map</string>
     <string name="done">DONE</string>
+    <string name="classification_error_occurred">Classification error occurred. Please try again with alternative features.</string>
+    <string name="error">Error</string>
 </resources>
