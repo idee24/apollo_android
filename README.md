@@ -4,7 +4,7 @@
 
 A data analysis and prediction project using open-source data and machine learning to identify patterns in global terrorism and predict terrorist incidents. The project includes a mobile application built for Android to facilitate these predictions, featuring real-time data collection, model training, and visualization of predictive probabilities.
 
-![alt text](https://github.com/[idee24]/[apollo_android]/blob/[master]/figma_display.jpg?raw=true)
+![alt text](https://github.com/[idee24]/[apollo_android]/blob/[master]/figma_display.png?raw=true)
 
 ## Background
 
