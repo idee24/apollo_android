@@ -4,8 +4,6 @@
 
 A data analysis and prediction project using open-source data and machine learning to identify patterns in global terrorism and predict terrorist incidents. The project includes a mobile application built for Android to facilitate these predictions, featuring real-time data collection, model training, and visualization of predictive probabilities.
 
-![alt text](https://github.com/idee24/apollo_android/blob/master/figma_display.png?raw=true)
-
 ## Background
 
 Terrorism, defined as "the threatened or actual use of illegal force and violence by a non-state actor to attain a political, economic, religious, or social goal through fear, coercion, or intimidation," is a persistent global threat. This project, "Apollo," aims to leverage machine learning and data analysis to predict the likelihood of terrorist incidents occurring over time, providing a valuable tool for policy makers and security professionals. 
@@ -21,6 +19,10 @@ The Android app "Apollo" allows users to train predictive models, input features
   - Display model performance metrics such as accuracy and F1 scores.
   
 - To build an interactive and user-friendly interface that provides clear insights and actionable information.
+
+
+## UI
+![alt text](https://github.com/idee24/apollo_android/blob/master/figma_display.png?raw=true)
 
 ## Data
 
