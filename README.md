@@ -1,6 +1,6 @@
 ---
 
-# Apollo Android
+# Apollo
 
 A data analysis and prediction project using open-source data and machine learning to identify patterns in global terrorism and predict terrorist incidents. The project includes a mobile application built for Android to facilitate these predictions, featuring real-time data collection, model training, and visualization of predictive probabilities.
 
