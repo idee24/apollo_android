@@ -420,7 +420,7 @@ fun isValidDate(mainActivity: MainActivity): Boolean {
     var isValidDate = false
     val startDate = getDateObject(mainActivity.startDate.value)
     val endDate = getDateObject(mainActivity.endDate.value)
-    val isFutureDate = (startDate.time > Date().time)
+    val isFutureDate = (startDate.time > Date((Date().time) - (94 * 60 * 60 * 1000)).time)
     isValidDate = ((endDate.time > startDate.time) &&
                     isIntervalGreaterThanOneMonth(startDate, endDate))
     if (isValidDate) {
